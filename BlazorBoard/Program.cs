@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -28,11 +27,20 @@ builder.Services.AddSingleton<WeatherForecastService>();
 
 var app = builder.Build();
 
+//when it is development, add seed data (Update-Database) 
+if (app.Environment.IsDevelopment())
+{
+    await CheckCandidateDbMigrated(app.Services);
+    CandidateSeedData(app); 
+    CandidateDbInitializer.Initialize(app);
+}
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
-    CandidateSeedData(app);
+    
 }
 else
 {
@@ -53,10 +61,7 @@ app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-if (app.Environment.IsDevelopment())
-{
-    CandidateDbInitializer.Initialize(app);
-}
+
 
 app.Run();
 
@@ -79,5 +84,19 @@ static void CandidateSeedData(WebApplication app)
             candidateDbContext.SaveChanges();
         }
     }
+}
+#endregion
+
+#region CheckCandidateDbMigrated
+//Database Migration
+async Task CheckCandidateDbMigrated(IServiceProvider services)
+{
+    using var scope = services.CreateScope();
+    using var candidateContext = scope.ServiceProvider.GetService<CandidateAppDbContext>();
+    if (candidateContext is not null)
+    {
+        await candidateContext.Database.MigrateAsync();
+    }
+
 } 
 #endregion
