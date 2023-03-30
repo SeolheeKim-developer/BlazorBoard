@@ -1,8 +1,73 @@
 ﻿@page "/Projects/Boards"
+@page "/Projects/Boards/Index"
+@using BlazorBoard.Data
+@using BlazorBoard.Models.Projects;
+@using Microsoft.EntityFrameworkCore;
+@inject ApplicationDbContext _Context
 
 <PageTitle>Boards</PageTitle>
-<h3>Boards</h3>
+<h1>Boards</h1>
+
+<p>
+    <a href="/Boards/Create">Create New</a>
+</p>
+
+@if (Boards is null)
+{
+    <div>Loading...</div>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Broth
+                </th>
+                <th>
+                    Is Vegan
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Boards)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.Broth?.Name @*//if broth is not null, bring the data*@
+                    </td>
+                    
+                    
+                    <td>
+                        <input class="check-box" type="checkbox" checked="@item.Broth?.IsVegan" />
+                    </td>
+                    <td>
+                        <a href="/Boards/Edit/@item.Id">Edit</a> |
+                        <a href="/Boards/Details/@item.Id">Details</a> |
+                        <a href="/Boards/Delete/@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+
+
+        </tbody>
+    </table>
+
+}
 
 @code {
+    //model or collection on the current page
+    private List<Board>? Boards { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        Boards = await _Context.Boards.Include(b =>b.Broth).ToListAsync();
+    }
 }
