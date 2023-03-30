@@ -14,8 +14,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 
 //Add new DbContext
-builder.Services.AddDbContext<CandidateAppDbContext>(options => 
-    options.UseSqlServer(connectionString));
+//builder.Services.AddDbContext<CandidateAppDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContextFactory<CandidateAppDbContext>(options => options.UseSqlServer(connectionString));
+
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
