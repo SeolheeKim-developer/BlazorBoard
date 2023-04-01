@@ -18,37 +18,12 @@
 
 <div class="row">
     <div class="col-md-4">
-        @if (Model is not null)
-        {
-            <EditForm Model="@Model" OnValidSubmit="FormSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <div class="form-group">
-                    <label class="control-label" for="txtFirstName">FirstName</label>
-                    @*<input class="form-control" type="text" data-val="true" data-val-length="The field FirstName must be a string with a maximum length of 50." data-val-length-max="50" data-val-required="The FirstName field is required." id="FirstName" maxlength="50" name="FirstName" value="" />*@
-                    <InputText @bind-Value="Model.FirstName" id="txtFirstName" class="form-control" placeholder="Enter FirstName" />
-                    @*<span class="text-danger field-validation-valid" data-valmsg-for="FirstName" data-valmsg-replace="true"></span>*@
-                    <ValidationMessage For="() => Model.FirstName" />
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="txtLastName">LastName</label>
-                    @*<input class="form-control" type="text" data-val="true" data-val-length="The field LastName must be a string with a maximum length of 50." data-val-length-max="50" data-val-required="The LastName field is required." id="LastName" maxlength="50" name="LastName" value="" />*@
-                    <InputText @bind-Value="Model.LastName" id="txtLastName" class="form-control" placeholder="Enter LastName" />
-                    @*<span class="text-danger field-validation-valid" data-valmsg-for="LastName" data-valmsg-replace="true"></span>*@
-                    <ValidationMessage For="@(() => Model.LastName)" />
-                </div>
-                <div class="form-group form-check">
-                    <label class="form-check-label" for="IsEnrollment">
-                        @*<input class="form-check-input" type="checkbox" data-val="true" data-val-required="The IsEnrollment field is required." id="IsEnrollment" name="IsEnrollment" value="true" /> *@
-                        <InputCheckbox @bind-Value="Model.IsEnrollment" id="IsEnrollment" class="form-check-input" />
-                        Is Enrollment
-                    </label>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" disabled="@Busy"/>
-                </div>
-            </EditForm>
-        }
+        
+            <BlazorBoard.Pages.Candidates.Components.EditorForm 
+                Model="@Model" Busy="@Busy"
+                OnSubmitCallback="@OnSubmitCallback">
+            </BlazorBoard.Pages.Candidates.Components.EditorForm>
+        
 
     </div>
 </div>
@@ -61,7 +36,7 @@
 
 @code {
     public Candidate? Model { get; set; }
-    public String? StatusMessage { get; set; }
+    public string? StatusMessage { get; set; }
     public bool Busy { get; set; }
     protected override void OnInitialized()
     {
@@ -108,5 +83,17 @@
     protected void HandleInvalidSubmit()
     {
         StatusMessage = "";
+    }
+
+    protected async Task OnSubmitCallback(bool isValid)
+    {
+        if (isValid)
+        {
+            await FormSubmit();
+        }
+        else
+        {
+            HandleInvalidSubmit();
+        }
     }
 }

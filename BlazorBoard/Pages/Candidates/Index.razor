@@ -3,11 +3,14 @@
 @page "/Candidates/Index/{Page:int?}"
 @page "/Candidates/List/{Page:int?}"
 @using BlazorBoard.Models.Candidates;
+
 @using Microsoft.EntityFrameworkCore;
 @*@inject CandidateAppDbContext _Context*@
 @inject IDbContextFactory<CandidateAppDbContext> _ContextFactory
 @inject NavigationManager _NavigationManager
 
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+@inject ProtectedLocalStorage ProtectedLocalStore
 
 <PageTitle>Candidate List</PageTitle>
 
@@ -118,11 +121,21 @@ else
             _NavigationManager.NavigateTo($"/Candidates/{PageCount}");
             return;
         }
+
+        
+
         Candidates = await context.Candidates
             .OrderBy(it => it.FirstName)
             .Skip(PageIndex * PageSize)
             .Take(PageSize)
             .ToArrayAsync();
-
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Page is not null)
+        {
+            await ProtectedLocalStore.SetAsync("Page", Page.Value);
+        }
+        
     }
 }
