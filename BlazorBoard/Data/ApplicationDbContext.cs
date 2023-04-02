@@ -1,10 +1,11 @@
-﻿using BlazorBoard.Models.Projects;
+﻿using BlazorBoard.Areas.Identity.Models;
+using BlazorBoard.Models.Projects;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorBoard.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
