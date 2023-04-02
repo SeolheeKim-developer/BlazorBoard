@@ -87,9 +87,13 @@ else
             //StatusMessage = "Success";
             await GotoIndexPage();
         }
-        catch(Exception)
+        catch (DbUpdateConcurrencyException)
         {
-            StatusMessage = "Error";
+            StatusMessage = $"Error - changed made. Please refresh the page and try again";
+        }
+        catch(Exception ex)
+        {
+            StatusMessage = $"Error - {ex.Message}";
         }
         finally
         {

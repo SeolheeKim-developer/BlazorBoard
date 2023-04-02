@@ -17,6 +17,8 @@ namespace BlazorBoard.Models.Candidates
         public string? LastName { get; set; }
 
         public bool IsEnrollment { get; set; }
+        [Timestamp] //rowversion
+        public byte[]? ConcurrencyToken { get; set; }
     }
     public class Candidate :CandidateBase
     {
