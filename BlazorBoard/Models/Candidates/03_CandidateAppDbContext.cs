@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BlazorBoard.Models.Candidates.CandidatesNames;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorBoard.Models.Candidates
 {
@@ -15,5 +16,7 @@ namespace BlazorBoard.Models.Candidates
         }
 
         public DbSet<Candidate> Candidates { get; set; } = null!;//null 허용
+
+        public DbSet<CandidateName> CandidatesNames { get; set; } = null!;
     }
 }
