@@ -1,0 +1,4 @@
+﻿to use blazor component in layout page(MVC, Razor Pages)
+	1. include <blazor.service.js> in body
+	<script src="/_framework/blazor.server.js"></script>
+	2. include <base href="~/"/> in head
