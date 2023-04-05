@@ -1,0 +1,11 @@
+﻿@page
+@model BlazorBoard.Pages.Candidates.CandidatesNames.ManageTestModel
+@{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Manage Component Test</h1>
+
+<component type="typeof(BlazorBoard.Pages.Candidates.CandidatesNames.Manage)"
+           render-mode="ServerPrerendered" 
+           param-UserId="Model.UserId"/>

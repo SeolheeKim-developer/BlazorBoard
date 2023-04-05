@@ -139,6 +139,9 @@ else if (Models.Length > 0)
 
 
 @code {
+    [Parameter]
+    public string UserId { get; set; } = "3142713f-1702-462d-afea-5a22ee29404c";
+
     private bool blnNames = true;
 
     //model or collection on the current page
@@ -173,7 +176,7 @@ else if (Models.Length > 0)
         PageIndex = 0;
         //Candidates = await _Context.Candidates.ToArrayAsync();
         using var context = _ContextFactory.CreateDbContext();
-        RecordCount = await context.Candidates.CountAsync();
+        RecordCount = await context.CandidatesNames.Where(ui => ui.UserId == UserId).CountAsync();
         PageCount = Convert.ToInt32(Math.Ceiling(RecordCount / (double)PageSize));
         if (PageCount == 0)
         {
@@ -183,8 +186,8 @@ else if (Models.Length > 0)
 
 
 
-        Models = await context.CandidatesNames
-            .OrderBy(it => it.FirstName)
+        Models = await context.CandidatesNames.Where(ui => ui.UserId == UserId)
+            .OrderByDescending(it => it.Id)
             .ToArrayAsync();
     }
 
@@ -244,7 +247,7 @@ else if (Models.Length > 0)
             {
 
                 using var ctx = _ContextFactory.CreateDbContext();
-                Model.UserId = "aaaa";
+                Model.UserId = UserId;
                 ctx.CandidatesNames.Add(Model);
                 ctx.SaveChanges();
 
