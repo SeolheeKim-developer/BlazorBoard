@@ -8,19 +8,21 @@
 
 @inject IJSRuntime JSRuntime
 
-<PageTitle>Candidate List</PageTitle>
+@namespace BlazorBoard.Pages.Candidates.CandidatesNames
 
-@if (!String.IsNullOrEmpty(StatusMessage))
+<PageTitle>CandidateNames List</PageTitle>
+
+@*@if (!String.IsNullOrEmpty(StatusMessage))
 {
     var statusMessageClass = StatusMessage.StartsWith("Error") ? "danger" : "success";
     <div class="alert alert-@statusMessageClass alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         @StatusMessage
     </div>
-}
+}*@
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-12">
 
         <BlazorBoard.Pages.Candidates.CandidatesNames.Components.EditorForm Model="@Model" Busy="@Busy"
                                                                             OnSubmitCallback="@OnSubmitCallback">
@@ -36,17 +38,21 @@
 }
 else
 {
+    <hr />
+
+        <div class="row">
+            <div class="col-md-12">
     <table class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th>
-                    FirstName
+                    First Name
                 </th>
                 <th>
-                    LastName
+                    Last Name
                 </th>
                 <th>
-                    MiddleName
+                    Middle Name
                 </th>
                 <th></th>
             </tr>
@@ -64,8 +70,8 @@ else
                     <td>
                         @item.MiddleName
                     </td>
-                    <td>
-                        <a href="/Candidates/CandidatesNames/Edit/@item.Id" class="btn btn-primary btn-sm">Edit</a> |
+                    <td class="text-center">
+                        @*<a href="/Candidates/CandidatesNames/Edit/@item.Id" class="btn btn-primary btn-sm">Edit</a>*@ |
 
                         <input type="button" class="btn btn-danger btn-sm" value="Delete"
                        @onclick="() => DeleteBy(item)" />
@@ -76,7 +82,9 @@ else
 
         </tbody>
     </table>
-    <ul class="pagination">
+        </div>
+    </div>
+    @*<ul class="pagination">
         <li class="page-item @((Page == 1) ? "disabled" : "")">
             <a class="page-link" href="/Candidates/CandidatesNames/@(Page -1)">Prev</a>
         </li>
@@ -99,7 +107,7 @@ else
         <li class="page-item @((Page == PageCount) ? "disabled" : "")">
             <a class="page-link" href="/Candidates/CandidatesNames/@(Page +1)">Prev</a>
         </li>
-    </ul>
+    </ul>*@
 }
 
 
@@ -127,11 +135,13 @@ else
         if (Page is null or < 1)
         {
             //Page = 1;
-            _NavigationManager.NavigateTo("/Candidates/CandidatesNames/1");
+            //_NavigationManager.NavigateTo("/Candidates/CandidatesNames/1");
+            Page = 1;
             return;
         }
 
-        PageIndex = Page.Value - 1;
+        //PageIndex = Page.Value - 1;
+        PageIndex = 0;
         //Candidates = await _Context.Candidates.ToArrayAsync();
         using var context = _ContextFactory.CreateDbContext();
         RecordCount = await context.Candidates.CountAsync();
@@ -141,28 +151,14 @@ else
             PageCount = 1;
         }
 
-        if (Page > PageCount)
-        {
-            _NavigationManager.NavigateTo($"/Candidates/CandidatesNames/{PageCount}");
-            return;
-        }
-
+        
 
 
         Models = await context.CandidatesNames
             .OrderBy(it => it.FirstName)
-            .Skip(PageIndex * PageSize)
-            .Take(PageSize)
             .ToArrayAsync();
     }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (Page is not null)
-        {
-            await ProtectedLocalStore.SetAsync("Page", Page.Value);
-        }
-
-    }
+    
     protected async Task DeleteBy(CandidateName model)
     {
         bool isDelete = await JSRuntime.InvokeAsync<bool>(
@@ -173,7 +169,7 @@ else
             {
                 using var context = _ContextFactory.CreateDbContext();
                 context.CandidatesNames.Remove(model);
-                await context.SaveChangesAsync();
+                context.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -219,9 +215,9 @@ else
             {
 
                 using var ctx = _ContextFactory.CreateDbContext();
-
+                Model.UserId = "aaaa";
                 ctx.CandidatesNames.Add(Model);
-                await ctx.SaveChangesAsync();
+                ctx.SaveChanges();
 
                 //await Task.Delay(5000);
 
@@ -230,16 +226,18 @@ else
                 StatusMessage = "Success";
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
 
-            StatusMessage = "Error";
+            StatusMessage = $"Error: {ex.Message}";
         }
         finally
         {
             Busy = false;
+            //await DisplayData();
+            Model = new();
+            //StateHasChanged();
             await DisplayData();
-            StateHasChanged();
         }
 
     }
