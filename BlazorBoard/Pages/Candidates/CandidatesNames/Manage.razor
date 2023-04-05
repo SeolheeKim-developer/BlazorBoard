@@ -142,6 +142,16 @@ else if (Models.Length > 0)
     [Parameter]
     public string UserId { get; set; } = "3142713f-1702-462d-afea-5a22ee29404c";
 
+    [Parameter]
+    public bool UseOtherNames
+    {
+        get { return blnNames; }
+        set
+        {
+            blnNames = value;
+        }
+    }
+
     private bool blnNames = true;
 
     //model or collection on the current page
